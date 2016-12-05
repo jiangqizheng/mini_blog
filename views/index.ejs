@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>call</title>
+		<link href="/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/css/jumbotron.css" rel="stylesheet">
+		<style type="text/css">
+			 #err{
+       			display:none;
+        		}
+        	.moban_height{
+        		height:200px;
+        		padding: 15px;
+        	}
+        	.moban_clien{
+        		height:170px;
+        		border-radius: 10px;
+        		box-shadow: 1px 2px 2px #ccc
+        	}
+        	#moban_time{
+        		position: absolute;
+        		right: 30px;
+        		bottom:0;
+        	}
+		</style>
+	</head>
+	<body>
+		<!-- nav__ -->
+		<% include header_navbar.ejs %>
+		<!-- __nav -->
+		<div class="jumbotron">
+			<!-- 判断login -->
+			<% if(!login){ %>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-7">
+						<h1>欢迎您来到CALL社区</h1>
+						<h3>这是一个言论自由的社区空间</h3>
+						<p><a class="btn btn-primary btn-lg" href="/regist" role="button">注册</a></p>
+					</div>
+					<div class="col-md-5">
+						<div class="row">
+						<div class="col-sm-10 col-sm-offset-2">
+							<h2>已有账号登入</h2>
+						</div>
+						</div>
+						<div class="row">
+						<form class="form-horizontal" role="form">
+							<div class="form-group">
+								<label for="username" class="col-sm-2 control-label">账号</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="username" placeholder="Username">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="password" class="col-sm-2 control-label">密码</label>
+								<div class="col-sm-10">
+									<input type="password" class="form-control" id="password" placeholder="Password">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-2">
+									<button type="button" class="btn btn-default" id="login">登入</button>
+								</div>
+								<div class=" col-sm-8">
+									<div class="alert alert-danger" id="err"></div>
+								</div>
+							</div>
+						</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<% }else {%>
+			<div class="container">
+			<div class="row">
+				<div class="col-md-1 col-sm-2 col-md-offset-1 hidden-xs">
+					<a href="/" class="thumbnail"><img src="/avatar/<%= avatar %>" height="100px" width="100px" ></a>
+				</div>
+				<div class="col-md-8">
+					<p><%= username %></p>
+					<textarea class="form-control" rows="4" cols="80" id="content" placeholder="填写内容......"></textarea>
+					<br/>
+					<button type="button" id="posttext" class="btn btn-default">发布信息</button>
+				</div>
+
+			</div>
+
+			</div>
+			<% } %>
+		</div>
+		<div class="container">
+			<!-- Example row of columns -->
+			<div class="row" id="alltext">
+			</div>
+			<hr>
+
+			</div> <!-- /container -->
+			<script type="text/template" id="moban">
+			<!-- 内容模板 -->
+				<div class="col-md-6 moban_height">
+					<div class="moban_clien">
+					<h2><img  width="35px" src="/avatar/{{=avatar}}" />{{=username}}:</h2>
+					<hr>
+					<p>{{=content}}</p>
+					<p id="moban_time">{{=date}}</p>
+					</div>
+				</div>
+			</script>
+			<script src="/js/jquery.min.js"></script>
+			<script src="/js/bootstrap.min.js"></script>
+			<script src="/js/underscore-noflect.js"></script>
+			<script type="text/javascript">
+			$(function(){
+				// 处理登入事项，ajax
+				$("input").focus(function(){$("#err").fadeOut();})
+				$("#login").click(function(){
+					$.post("/dologin",{
+						"username":$("#username").val(),
+						"password":$("#password").val(),
+					},function(data){
+						switch(data){
+							case "-1":
+							$("#err").fadeIn().html("<strong>登入失败</strong> : 系统错误,请联系管理员！");
+							break;
+							case "0":
+							$("#err").fadeIn().html("<strong>登入失败</strong> : 用户名不存在！");
+							break;
+							case "1":
+							$("#err").fadeIn().html("<strong>登入失败</strong> : 密码错误！");
+							break;
+							case "8":
+							window.location="/";
+							break;
+						};
+					});
+				});
+
+				// 处理发表内容，ajax
+				$("#posttext").click(function(){
+					$.post("/posttext",{"content":$("#content").val()},function(data){
+						if(data=="-1"){
+							alert("发布失败：系统错误");
+						};
+						$("#content").val("");
+						window.location="/";
+					});
+				});
+
+				// ajax读取内容，设置模板
+				var $template=$("#alltext");
+				var compiled=_.template($("#moban").html());
+				var userpage=0;
+				var pagecontainer=true;
+				getPage(0,12);
+
+				function getPage(page,item){
+				$.get("/getalltext?page="+page+"&item="+item,function(data){
+					(function iterator(i){
+						// ajax请求嵌套,迭代器
+						if(i==data.result.length){
+							userpage++;
+							pagecontainer=true;
+							return;
+						};
+						$.ajax({
+							type:"get",
+							url:"/getuserinfo?username="+data.result[i].username,
+							success:function(data2){
+								data.result[i].avatar=data2.result.avatar;
+	 							var htmlstring=compiled(data.result[i]);
+						   		$template.append($(htmlstring));
+						   		iterator(i+1)
+							}});
+						}(0))
+					});
+				};
+
+					// 滚动时ajax获取内容
+					// 判断上一次请求是否已经完成，如果完成则发送下一次ajax
+					$(window).scroll(function(){
+					 	if($(document).scrollTop() >= $(document).height() - $(window).height()-50){
+					 		if(pagecontainer){
+					 			getPage(userpage,12);
+					 			pagecontainer=false;
+					 		};
+					 	};
+					})
+
+			});
+		</script>
+		</body>
+	</html>

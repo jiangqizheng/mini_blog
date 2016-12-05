@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>call</title>
+		<link href="/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/css/jumbotron.css" rel="stylesheet">
+		<style type="text/css">
+			html,body{
+				height: 100%;
+			}
+			#page_form{
+				margin-top:51px;
+			}
+			#err{
+				display:none;
+			}
+			footer{
+				position: absolute;
+				bottom:25px;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- nav__ -->
+		<% include header_navbar.ejs %>
+		<!-- __nav -->
+		<div class="container" id="page_form">
+			<div class="row">
+				<div class="col-md-4">
+					<fieldset>
+						<legend><h1>欢迎注册</h1></legend>
+						<form>
+							<div class="form-group">
+								<label for="username">用户名</label>
+								<input type="text" class="form-control" id="username" placeholder="请输入优雅且唯一的用户名">
+							</div>
+							<div class="form-group">
+								<label for="password">密码</label>
+								<input type="password" class="form-control" id="password" placeholder="请输入大于6位数密码">
+							</div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox"> 我同意社区规定
+								</label>
+							</div>
+							<button type="button" id="regist" class="btn btn-default">注册</button>
+						</form>
+					</fieldset>
+				</div>
+			</div>
+		</div>
+		<hr>
+		<div class="container">
+		<div class="alert alert-danger" id="err"></div>
+		</div>
+		</div>
+		<script src="/js/jquery.min.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+			$("input").focus(function(){
+				$("#err").fadeOut();
+			})
+			$(function(){
+				$("#regist").click(function(){
+					$.post("/doregist",{
+						"username":$("#username").val(),
+						"password":$("#password").val(),
+					},function(data){
+						switch(data){
+							case "-1":
+							$("#err").fadeIn().html("<strong>注册失败</strong> : 系统错误,请联系管理员！");
+							break;
+							case "0":
+							$("#err").fadeIn().html("<strong>注册失败</strong> : 用户名已被占用,请更换用户名!");
+							break;
+							case "8":
+							alert("注册成功:欢迎进入社区！||系统将自动跳转至首页.....");
+							window.location="/";
+							break;
+						};
+					});
+				});
+			});
+		</script>
+	</body>
+</html>

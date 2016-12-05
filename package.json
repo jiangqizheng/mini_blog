@@ -1,0 +1,27 @@
+{
+  "name": "mini_blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "formidable": "^1.0.17",
+    "gm": "^1.23.0",
+    "mongoose": "^4.6.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiangqizheng/mini_blog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jiangqizheng/mini_blog/issues"
+  },
+  "homepage": "https://github.com/jiangqizheng/mini_blog#readme"
+}

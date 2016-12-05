@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>call</title>
+		<link href="/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/css/jumbotron.css" rel="stylesheet">
+		<style type="text/css">
+			#main{
+				margin-top:60px;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- nav__ -->
+		<% include header_navbar.ejs %>
+		<!-- __nav -->
+		<% if(login){ %>
+			<div class="container" id="main">
+				<div class="row">
+				<h1>注册用户列表</h1>
+				</div>
+				<hr/>
+						<% for(var i=0;i<users.length;i++){ %>
+						<div class="row">
+						 <div class="media">
+						  <a class="media-left media-middle" href="/user/<%= users[i].username %>">
+						    <img src="/avatar/<%= users[i].avatar %>">
+						  </a>
+						  <div class="media-body">
+						    <h4 class="media-heading"><%= users[i].username %></h4>
+						  </div>
+						</div>
+						  </div>
+						  <hr/>
+						<%}%>
+						</div>
+						<% }else{ %>
+						<div class="container">
+					<h1>请登入后查看用户列表</h1>
+					</div>
+						<% } %>
+			<script src="/js/jquery.min.js"></script>
+			<script src="/js/bootstrap.min.js"></script>
+			<script src="/js/underscore-noflect.js"></script>
+			<script type="text/javascript">
+
+
+		</script>
+		</body>
+	</html>

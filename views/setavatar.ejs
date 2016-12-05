@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>setavatar</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/css/jquery.Jcrop.css">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/jquery.Jcrop.js"></script>
+        <script type="text/javascript" src="/js/xiaoguo.js"></script>
+        <style type="text/css">
+           body {
+              padding-top: 100px;
+              padding-bottom: 20px;
+            }
+            #btn{
+                width: 200px;
+                height: 80px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- nav__ -->
+        <% include header_navbar.ejs %>
+        <!-- __nav -->
+
+        <div class="container" id="page_form" >
+        <img src="/avatar/<%= avatar %>" id="target" />
+        <div id="preview-pane">
+            <div class="preview-container">
+                <img src="/avatar/<%= avatar %>" class="jcrop-preview"/>
+            </div>
+        </div>
+        <hr>
+        <input type="button" class="btn btn-default" value="剪裁" id="btn">
+        </div>
+
+        <hr>
+        <script type="text/javascript">
+        $("input").click(function () {
+        var w = parseInt($(".jcrop-holder>div:first").css("width"));
+        var h = parseInt($(".jcrop-holder>div:first").css("height"));
+        var x = parseInt($(".jcrop-holder>div:first").css("left"));
+        var y = parseInt($(".jcrop-holder>div:first").css("top"));
+        $.get("/dosetavatar",{
+        "w" : w,
+        "h" : h,
+        "x" : x,
+        "y" : y
+        },function(result){
+            if(result=="-1"){
+                alert("系统错误");
+            }else if(result=="1"){
+                 alert("修改成功");
+                 window.location="/";
+            };
+        });
+        });
+        </script>
+        <script src="/js/bootstrap.min.js"></script>
+    </body>
+</html>
